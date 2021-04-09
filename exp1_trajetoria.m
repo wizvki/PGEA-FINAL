@@ -145,11 +145,11 @@ while (uav{1}.time() < tf)% && (min(wps) <= length(traj))
         grid on;
         hold off;
         drawnow;
+        for u = 1:length(uav)
+            uav{u}.plot(plots, tf);      
+        end
     end
     
-    for u = 1:length(uav)
-        uav{u}.plot(plots, tf);      
-    end
 end                    
                     
 % imprime em pdf
