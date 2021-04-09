@@ -336,7 +336,7 @@ classdef quadHibridoproposta2 < handle
             % <matlab:matlab.desktop.editor.openDocument(which('prop_water.m')).goToFunction('getRho')
             % getRho(this)>
             % 
-            rho = this.getRho2()
+            rho = this.getRho2();
             
             % massa adicionais --> "George Green 1833"
             added_mass = ((4/6)*pi*(this.rc^3))*rho;
@@ -827,6 +827,7 @@ classdef quadHibridoproposta2 < handle
                 figure(31);
                 labels = {'v_x', 'v_y', 'v_z'};
                 for i = 1:3
+                    figure(31),set(gca,'FontSize',18);
                     subplot(3,2,2*i-1)
                     plot(t, v(i,:), 'Color', this.cor, 'linewidth', 1); hold on;
                     ylabel(['$$' labels{i} '$$ [m./sec.]'], 'Interpreter','latex')
@@ -837,6 +838,7 @@ classdef quadHibridoproposta2 < handle
                 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 labels = {'p', 'q', 'r'};
                 for i = 1:3
+                    figure(31),set(gca,'FontSize',18);
                     subplot(3,2,2*i)
                     plot(t, rad2deg(q(i,:)), 'Color', this.cor, 'linewidth', 1); hold on;
                     ylabel(['$$' labels{i} '$$ [deg./sec.]'], 'Interpreter','latex')
@@ -925,6 +927,33 @@ classdef quadHibridoproposta2 < handle
                 box off;
                 xlabel('time [sec.]')
                 legend('motor','peso','empuxo','arrasto','coriolis');
+            end
+            if (plots(7)== 1)
+                figure(36),set(gca,'FontSize',18);
+                subplot(2,1,2)
+                yyaxis left
+                plot(t, forca1(3,:), '-', 'Color', 'b', 'linewidth', 1); 
+                hold on;
+                yyaxis left
+                plot(t, forca2(3,:), '-', 'Color', 'g', 'linewidth', 1); 
+                hold on;
+                yyaxis left
+                plot(t, forca3(3,:), '-', 'Color', 'c', 'linewidth', 1); 
+                hold on;
+                yyaxis right
+                plot(t, forca4(3,:),'-', 'Color', 'r', 'linewidth', 1); 
+                hold on;
+                ylabel(['$$arrasto f_z$$ [N]'], 'Interpreter','latex')
+                yyaxis left
+                plot(t, forca5(3,:), '-', 'Color', 'k', 'linewidth', 1);
+                hold off;
+                ylabel(['$$f_z$$ [N]'], 'Interpreter','latex')
+                xlim([t(1) t(end)])
+                xlim([t(1) fim])
+                box off;
+                xlabel('time [sec.]')
+                legend('motor','peso','empuxo','coriolis','arrasto');
+                title("Com transição");
             end
         end
     end

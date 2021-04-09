@@ -64,6 +64,8 @@ count = 0;
 wps = ones(size(uav));
 chegou = false(size(uav));
 
+para=1;
+
 %figure(10), clf, set(gcf, 'Position', [0 0 1200 1200]);
 %figure(10), clf, set(gcf, 'Position', [-0.6000  361.0000  560.0000  420.0000]);
 %figure(10), clf, set(gcf, 'Position', 1.0e+03 *[0.3922    0.0386    1.1456    0.7368]);%posicao lg 
@@ -74,14 +76,14 @@ figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.8586   -0.1854    0.8544    0
 set(figure(10),'name','figure_name','numbertitle','on') % Setting the name of the figure
 clf(figure(10)) % Erase the contents of the figure
 
-plots = [0 1 0 0 0 0];%define quais plots quer visualizar
+plots = [0 0 0 0 0 0 1];%define quais plots quer visualizar
 if (plots(1)==1)%posicao%orientacao
     %figure(30), clf, set(gcf, 'Position', [562.6000  360.2000  560.0000  420.0000]);
     figure(30), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
 end
 if (plots(2)==1)%velocidade linear %angular
     %figure(31), clf, set(gcf, 'Position', [ 562.6000  360.2000  560.0000  420.0000]);
-    figure(31), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
+    figure(31), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]),;%direita
 end
 if (plots(3)==1)%velocidade motor
     figure(32), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);
@@ -98,6 +100,11 @@ end
 if (plots(6)==1)%z; v_z; f_z  
     %figure(35), clf, set(gcf, 'Position', [ 2250.6    243.4    561.6    538.4]);
     figure(35), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
+end
+
+if (plots(7)==1)% f_z ambos 
+    %figure(36), clf, set(gcf, 'Position', [ 2250.6    243.4    561.6    538.4]);
+    figure(36), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
 end
 while (uav{1}.time() < tf)% && (min(wps) <= length(traj))    
     
@@ -116,11 +123,16 @@ while (uav{1}.time() < tf)% && (min(wps) <= length(traj))
         end
     end
     
+    if (para == 1)
+        pause(5);
+        para = 0;
+    end
+    
     desenha = true;
     
     % desenha
-    if (mod(uav{1}.time, 1/2) < 1/500) && (desenha)
-        
+    if (mod(uav{1}.time, 1/2) < 1/200) && (desenha)
+        uav{1}.time
         figure(10), clf;
         % desenha drones
         for u = 1:length(uav)
