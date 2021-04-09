@@ -1,0 +1,322 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>prop_air</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-10-02"><meta name="DC.source" content="prop_air.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">classdef</span> prop_air &lt; handle
+    <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+    <span class="keyword">properties</span> (SetAccess = private, GetAccess = private)
+        <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+        <span class="comment">% system parameters</span>
+        <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+        w;          <span class="comment">% velocidade do motor</span>
+        kg = 30;    <span class="comment">% motor gain</span>
+
+        r = 0.250/2; <span class="comment">% propellers radius</span>
+
+        <span class="comment">% saturacoes de velocidade</span>
+        satW_air = saturation([0 4000]);
+        satW_wat = saturation([0 4000]);
+
+        <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+        <span class="comment">% environment parameters</span>
+        <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+        env; <span class="comment">% ambiente</span>
+        rho_air = 1.293;    <span class="comment">% [kg/m^3]   air density</span>
+        rho_wat = 1.0e3;    <span class="comment">% [kg/m^3]   water density</span>
+    <span class="keyword">end</span>
+    <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+    <span class="keyword">methods</span>
+        <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+        <span class="comment">% construtor</span>
+        <span class="keyword">function</span> this = prop_air(env)
+
+            this.env = env; <span class="comment">% enviroment</span>
+
+            <span class="comment">% seta velocidade inicial do motor (comeca parado)</span>
+            this.w = 0;
+        <span class="keyword">end</span>
+        <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+        <span class="comment">% atualiza estado do motor</span>
+        <span class="keyword">function</span> update(this, wdes, dt, env)
+
+            <span class="comment">% enviroment</span>
+            this.env = env;
+
+            <span class="comment">% valor desejado de velocidade depende do meio</span>
+            <span class="keyword">if</span> isAir(this.env)
+                wdes = this.satW_air.evaluate(wdes);
+            <span class="keyword">else</span>
+                wdes = this.satW_wat.evaluate(wdes);
+            <span class="keyword">end</span>
+
+            <span class="comment">% equacao dinamica do motor</span>
+            dw = this.kg*(wdes - this.getSpeed());
+
+            <span class="comment">% integra o modelo do motor</span>
+            this.w = this.getSpeed() + dw*dt;
+        <span class="keyword">end</span>
+        <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+        <span class="comment">% forca gerada pelo motor</span>
+        <span class="keyword">function</span> F = getForce(this)
+            F = this.getKf()*this.getRho()*(this.getSpeed().^2);
+        <span class="keyword">end</span>
+        <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+        <span class="comment">% retorna velocidade de rotacao</span>
+        <span class="keyword">function</span> w = getSpeed(this)
+            w = this.w;
+            <span class="keyword">if</span> isnan(w)
+                w = 0;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+        <span class="comment">% calcula coeficiente em funcao da velocidade</span>
+        <span class="keyword">function</span> kf = getKf(this)
+
+<span class="comment">%             % verifica o ambiente</span>
+<span class="comment">%             if isAir(this.env)</span>
+<span class="comment">%                 p = [-9.8945e-12   9.6936e-08    3.073e-05];</span>
+<span class="comment">%             else</span>
+<span class="comment">%                 %p = [-9.8945e-12   9.6936e-08    3.073e-05];</span>
+<span class="comment">%                 %p = [8.4665e-10   -7.285e-07   0.00019442];</span>
+<span class="comment">%                 p = [2.3281e-11  -1.4307e-07    0.0010654]/5e3;</span>
+<span class="comment">%             end</span>
+<span class="comment">%             cT = polyval(p, this.getSpeed());</span>
+<span class="comment">%             % calcula ganho da helice</span>
+<span class="comment">%             A = pi*(this.r.^2);</span>
+<span class="comment">%             kf = cT*A*(this.r.^2);</span>
+
+            <span class="comment">% maia 2017 naviator</span>
+            <span class="keyword">if</span> isAir(this.env)
+                kf = 2.45e-7;
+            <span class="keyword">else</span>
+                kf = 2.55e-7*1e-3;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+        <span class="comment">% pega densidade do ambiente</span>
+        <span class="keyword">function</span> rho = getRho(this)
+            <span class="keyword">if</span> isAir(this.env)
+                rho = this.rho_air;
+            <span class="keyword">else</span>
+                rho = this.rho_wat;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+        <span class="keyword">function</span> draw(this, R, p, pah)
+
+            n = 20; <span class="comment">% resolution</span>
+
+            <span class="comment">% cor da helice</span>
+            color = [0 0.2 1.0];
+
+            <span class="comment">% draw propeller</span>
+            <span class="keyword">if</span> abs(this.getSpeed()) &gt; 1
+                alpha = .5; <span class="comment">% rodando</span>
+            <span class="keyword">else</span>
+                alpha = .01; <span class="comment">% parado</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">% desenha a helice</span>
+            c = circle(this.r, n) + pah;
+            [x, y, z] = feval(@(a)a{:}, num2cell(p));
+            c = R*c + [x*ones(1,n); y*ones(1,n); z*ones(1,n)];
+            <span class="comment">%</span>
+            patch(c(1,:), c(2,:), c(3,:), color, <span class="string">'FaceAlpha'</span>, alpha);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in prop_air (line 29)
+            this.env = env; % enviroment
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+classdef prop_air < handle
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    properties (SetAccess = private, GetAccess = private)
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % system parameters
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        w;          % velocidade do motor
+        kg = 30;    % motor gain
+        
+        r = 0.250/2; % propellers radius
+        
+        % saturacoes de velocidade
+        satW_air = saturation([0 4000]);
+        satW_wat = saturation([0 4000]);
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % environment parameters
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        env; % ambiente
+        rho_air = 1.293;    % [kg/m^3]   air density
+        rho_wat = 1.0e3;    % [kg/m^3]   water density
+    end
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    methods
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % construtor
+        function this = prop_air(env)
+            
+            this.env = env; % enviroment
+            
+            % seta velocidade inicial do motor (comeca parado)
+            this.w = 0;
+        end
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % atualiza estado do motor
+        function update(this, wdes, dt, env)
+            
+            % enviroment
+            this.env = env;
+            
+            % valor desejado de velocidade depende do meio
+            if isAir(this.env)
+                wdes = this.satW_air.evaluate(wdes);
+            else
+                wdes = this.satW_wat.evaluate(wdes);
+            end
+            
+            % equacao dinamica do motor
+            dw = this.kg*(wdes - this.getSpeed());
+            
+            % integra o modelo do motor
+            this.w = this.getSpeed() + dw*dt;
+        end
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % forca gerada pelo motor
+        function F = getForce(this)
+            F = this.getKf()*this.getRho()*(this.getSpeed().^2);
+        end
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % retorna velocidade de rotacao
+        function w = getSpeed(this)
+            w = this.w;
+            if isnan(w)
+                w = 0;
+            end
+        end
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % calcula coeficiente em funcao da velocidade
+        function kf = getKf(this)
+            
+%             % verifica o ambiente
+%             if isAir(this.env)
+%                 p = [-9.8945e-12   9.6936e-08    3.073e-05];
+%             else
+%                 %p = [-9.8945e-12   9.6936e-08    3.073e-05];
+%                 %p = [8.4665e-10   -7.285e-07   0.00019442];
+%                 p = [2.3281e-11  -1.4307e-07    0.0010654]/5e3;
+%             end
+%             cT = polyval(p, this.getSpeed());
+%             % calcula ganho da helice
+%             A = pi*(this.r.^2);
+%             kf = cT*A*(this.r.^2);
+
+            % maia 2017 naviator
+            if isAir(this.env)
+                kf = 2.45e-7;
+            else
+                kf = 2.55e-7*1e-3;
+            end
+        end
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % pega densidade do ambiente
+        function rho = getRho(this)
+            if isAir(this.env)
+                rho = this.rho_air;
+            else
+                rho = this.rho_wat;
+            end
+        end
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        function draw(this, R, p, pah)
+            
+            n = 20; % resolution
+            
+            % cor da helice
+            color = [0 0.2 1.0];
+            
+            % draw propeller
+            if abs(this.getSpeed()) > 1
+                alpha = .5; % rodando
+            else
+                alpha = .01; % parado
+            end
+            
+            % desenha a helice
+            c = circle(this.r, n) + pah;
+            [x, y, z] = feval(@(a)a{:}, num2cell(p));
+            c = R*c + [x*ones(1,n); y*ones(1,n); z*ones(1,n)];
+            %
+            patch(c(1,:), c(2,:), c(3,:), color, 'FaceAlpha', alpha);
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>
