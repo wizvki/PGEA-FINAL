@@ -64,6 +64,7 @@ count = 0;
 wps = ones(size(uav));
 chegou = false(size(uav));
 
+%%%%%teste funcao pause
 para=1;
 
 %figure(10), clf, set(gcf, 'Position', [0 0 1200 1200]);
