@@ -1,3 +1,3 @@
 # PGEA-FINAL
 
-Rode primeiro o rvctools.m
+Rode primeiro o rvctools/startup_rvc.m
