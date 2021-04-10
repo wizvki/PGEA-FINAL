@@ -36,14 +36,14 @@ traj{1} = [-5; -5; 0.3; deg2rad(0)];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % condicoes iniciais
-p1 = [-5; -5; 2];              % posicao [m]
+p1 = [-5; -5; 0.5];              % posicao [m]
 v1 = [0; 0; 0];              % velocidade [m/s]
 r1 = deg2rad([0; 0; 0]);     % atitude [rad]
 q1 = deg2rad([0; 0; 0]);     % rotacao [rad/s]
 x1 = [p1; r1; v1; q1];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % condicoes iniciais
-p2 = [-4; -5; 2];              % posicao [m]
+p2 = [-4; -5; 1];              % posicao [m]
 v2 = [0; 0; 0];              % velocidade [m/s]
 r2 = deg2rad([0; 0; 0]);     % atitude [rad]
 q2 = deg2rad([0; 0; 0]);     % rotacao [rad/s]
@@ -73,7 +73,6 @@ para=1;
 % figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.8586   0.0654    0.9200    0.9680]);%posicao hp canto superior esquerda
 
 figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.8586   -0.1854    0.8544    0.9680]);%posicao hp esquerda
-figure(10), ,set(gca,'FontSize',18);
 set(figure(10),'name','Simulação','numbertitle','on') % Setting the name of the figure
 clf(figure(10)) % Erase the contents of the figure
 
@@ -104,7 +103,7 @@ if (plots(6)==1)%z; v_z; f_z
 end
 if (plots(7)==1)% f_z ambos 
     %figure(36), clf, set(gcf, 'Position', [ 2250.6    243.4    561.6    538.4]);
-    figure(36), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
+    figure(36), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.8856    0.9680]);%direita
 end
 if (plots(8)==1)% a_z  
     %figure(38), clf, set(gcf, 'Position', [ -12.6000  362.6000  560.0000  420.0000]);
@@ -117,6 +116,8 @@ end
 
 while (uav{1}.time() < tf)% && (min(wps) <= length(traj))    
     
+    figure(10), set(gca,'FontSize',16);
+        
     % atualiza modelo
     for u = 1:length(uav)
         try
@@ -152,7 +153,7 @@ while (uav{1}.time() < tf)% && (min(wps) <= length(traj))
                     [-1 0]);
         % desenha trajetoria
         wayps = [traj{:}]';
-        plot3(wayps(:,1), wayps(:,2), wayps(:,3), 'k--', 'linewidth', 2)
+        plot3(wayps(:,1), wayps(:,2), wayps(:,3), 'k--', 'linewidth', 2), set(gca,'FontSize',16);
         %
         %title(['t = ' num2str(uav.time())])
         axis equal;
@@ -169,7 +170,8 @@ while (uav{1}.time() < tf)% && (min(wps) <= length(traj))
             para = 0;
         end
     end
-    
+    figure(10), set(gca,'FontSize',16);
+        
 end                    
                     
 % imprime em pdf

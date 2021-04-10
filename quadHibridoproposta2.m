@@ -17,10 +17,11 @@ classdef quadHibridoproposta2 < handle
         vol = (1.1)*1.42887e-03;  % Volume [m^3]
         l = 0.27;   % [m] wing span
         rc = 0.27/4;   % raio do centro
+        height = 0.27/2; 
         contraroting_dist = .1;     % [m] altura
         
         Cp = diag([2.5; 2.5; 9.99])*1e-2;    % coeficiente de arrasto de translacao
-        Cr = diag([1.25; 1.25; 1.25*2])*1e-2;    % coeficiente de arrasto de rotacao
+        Cr = diag([1.25; 1.25; 1.25/2])*1e-2;    % coeficiente de arrasto de rotacao
         %%%%%%%%%%%calculado depois
 %         Cp = diag([1.723; 1.723; 2.568])*1e-2;    % coeficiente de arrasto de translacao
 %         Cr = diag([0.9477; 0.9477; 1.8954])*1e-2;    % coeficiente de arrasto de rotacao
@@ -56,7 +57,7 @@ classdef quadHibridoproposta2 < handle
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % tempo
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        dt = (1/500);   % 100Hz de frequencia interna
+        dt = (1/500);   % 500Hz de frequencia interna
         t = 0;          % relogio
     end
     %propriedades publico%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -336,7 +337,7 @@ classdef quadHibridoproposta2 < handle
             % <matlab:matlab.desktop.editor.openDocument(which('prop_water.m')).goToFunction('getRho')
             % getRho(this)>
             % 
-            rho = this.getRho2();
+            rho = this.getRho2()
             
             % massa adicionais --> "George Green 1833"
             added_mass = ((4/6)*pi*(this.rc^3))*rho;
@@ -678,16 +679,16 @@ classdef quadHibridoproposta2 < handle
         % pega densidade do ambiente
         function rho = getRho2(this)
             if isAir(this.env)
-                if (this.x(3)  >= 0.135)    
+                if (this.x(3)  >= this.height)    
                     rho = this.rho_air;
                 else
-                    rho = -4993.535*this.x(3) + 500.6465;
+                    rho = (-(this.rho_wat - this.rho_air) / (2 * this.height))*(this.x(3) - this.height) + this.rho_air;
                 end
             else
-                if (this.x(3) <= -0.135)
+                if (this.x(3) <= -this.height)
                     rho = this.rho_wat;
                 else
-                    rho = -4993.535*this.x(3) + 500.6465 ;
+                    rho = (-(this.rho_wat - this.rho_air) / (2 * this.height))*(this.x(3) - this.height) + this.rho_air;
                 end
             end
         end
@@ -800,6 +801,7 @@ classdef quadHibridoproposta2 < handle
                 figure(30)
                 labels = {'x', 'y', 'z'};
                 for i = 1:3
+                    figure(30),set(gca,'FontSize',18);
                     subplot(3,2,2*i-1)
                     plot(t, p(i,:), 'Color', this.cor, 'linewidth', 1); hold on;
                     %plot(t, ref(i,:), '--', 'Color', this.cor, 'linewidth', 1); hold on;
@@ -812,6 +814,7 @@ classdef quadHibridoproposta2 < handle
                 labels = {'\phi', '\theta', '\psi'};
                 sp = [2 1 3];
                 for i = 1:3
+                    figure(30),set(gca,'FontSize',18);
                     subplot(3,2,2*sp(i))
                     plot(t, rad2deg(r(i,:)), 'Color', this.cor, 'linewidth', 1); hold on;
                     %plot(t, rad2deg(ref(3+i,:)), '--', 'Color', this.cor, 'linewidth', 1); hold on;
@@ -852,6 +855,7 @@ classdef quadHibridoproposta2 < handle
             if (plots(3)== 1)
                 figure(32)
                 for i = 1:4
+                    figure(32),set(gca,'FontSize',18);
                     subplot(4,1,i)
                     plot(t, w(i,:), 'Color', this.cor, 'linewidth', 1); 
                     hold on;
@@ -865,6 +869,7 @@ classdef quadHibridoproposta2 < handle
             if (plots(4)== 1)
                 figure(33)
                 for i = 1:4
+                    figure(33),set(gca,'FontSize',18);
                     subplot(4,1,i)
                     plot(t, F(i,:), 'Color', this.cor, 'linewidth', 1); 
                     hold on;
@@ -879,6 +884,7 @@ classdef quadHibridoproposta2 < handle
             if (plots(5)== 1)
                 figure(34)
                 for i = 1:3
+                    figure(31),set(gca,'FontSize',18);
                     subplot(3,1,i)
                     plot(t, forca1(i,:), 'Color', 'b', 'linewidth', 1); 
                     hold on;
@@ -898,7 +904,7 @@ classdef quadHibridoproposta2 < handle
                 legend('motor','peso','empuxo','arrasto','coriolis');
             end
             if (plots(6)== 1)
-                figure(35)
+                figure(35),set(gca,'FontSize',18);
                 subplot(3,1,1)
                 plot(t, p(3,:), 'Color', this.cor, 'linewidth', 1); hold on;
                 ylabel(['$$z$$ [m.]'], 'Interpreter','latex')
@@ -929,7 +935,7 @@ classdef quadHibridoproposta2 < handle
                 legend('motor','peso','empuxo','arrasto','coriolis');
             end
             if (plots(7)== 1)
-                figure(36),set(gca,'FontSize',18);
+                figure(36),set(gca,'FontSize',16);
                 subplot(2,1,2)
                 yyaxis left
                 plot(t, forca1(3,:), '-', 'Color', 'b', 'linewidth', 1); 
@@ -956,19 +962,21 @@ classdef quadHibridoproposta2 < handle
                 title('Com transição');
             end
             if (plots(9)== 1)
-                figure(39);
+                figure(39),set(gca,'FontSize',18);
                 subplot(3,1,1);
                 plot(t, p(3,:), 'Color', this.cor, 'linewidth', 1); hold on;
                 ylabel(['$$z$$ [m.]'], 'Interpreter','latex')
                 xlim([t(1) fim])
                 box off;
                 xlabel('time [sec.]')
+                figure(39),set(gca,'FontSize',18);
                 subplot(3,1,2)
                 plot(t, v(3,:), 'Color', this.cor, 'linewidth', 1); hold on;
                 ylabel(['$$v_z$$ [m./sec.]'], 'Interpreter','latex')
                 xlim([t(1) fim])
                 box off;
                 xlabel('time [sec.]')
+                figure(39),set(gca,'FontSize',18);
                 subplot(3,1,3)
                 plot(t, at(3,:), 'Color', this.cor, 'linewidth', 1); 
                 hold on;
@@ -976,6 +984,7 @@ classdef quadHibridoproposta2 < handle
                 xlim([t(1) fim])
                 box off;
                 xlabel('time [sec.]');
+                figure(39),set(gca,'FontSize',18);
             end
         end
     end

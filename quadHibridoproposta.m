@@ -20,7 +20,7 @@ classdef quadHibridoproposta < handle
         contraroting_dist = .1;     % [m] altura
         
         Cp = diag([2.5; 2.5; 9.99])*1e-2;    % coeficiente de arrasto de translacao
-        Cr = diag([1.25; 1.25; 1.25*2])*1e-2;    % coeficiente de arrasto de rotacao
+        Cr = diag([1.25; 1.25; 1.25/2])*1e-2;    % coeficiente de arrasto de rotacao
         %%%%%%%%%%%calculado depois
 %        Cp = diag([1.723; 1.723; 2.568])*1e-2;    % coeficiente de arrasto de translacao
 %        Cr = diag([0.9477; 0.9477; 1.8954])*1e-2;    % coeficiente de arrasto de rotacao
@@ -56,7 +56,7 @@ classdef quadHibridoproposta < handle
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % tempo
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        dt = (1/500);   % 100Hz de frequencia interna
+        dt = (1/500);   % 500Hz de frequencia interna
         t = 0;          % relogio
     end
     %propriedades publico%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -792,6 +792,7 @@ classdef quadHibridoproposta < handle
                 figure(30)
                 labels = {'x', 'y', 'z'};
                 for i = 1:3
+                    figure(30),set(gca,'FontSize',18);
                     subplot(3,2,2*i-1)
                     plot(t, p(i,:), 'Color', this.cor, 'linewidth', 1); hold on;
                     %plot(t, ref(i,:), '--', 'Color', this.cor, 'linewidth', 1); hold on;
@@ -804,6 +805,7 @@ classdef quadHibridoproposta < handle
                 labels = {'\phi', '\theta', '\psi'};
                 sp = [2 1 3];
                 for i = 1:3
+                    figure(30),set(gca,'FontSize',18);
                     subplot(3,2,2*sp(i))
                     plot(t, rad2deg(r(i,:)), 'Color', this.cor, 'linewidth', 1); hold on;
                     %plot(t, rad2deg(ref(3+i,:)), '--', 'Color', this.cor, 'linewidth', 1); hold on;
@@ -844,6 +846,7 @@ classdef quadHibridoproposta < handle
             if (plots(3)== 1)
                 figure(32)
                 for i = 1:4
+                    figure(32),set(gca,'FontSize',18);
                     subplot(4,1,i)
                     plot(t, w(i,:), 'Color', this.cor, 'linewidth', 1); 
                     hold on;
@@ -857,6 +860,7 @@ classdef quadHibridoproposta < handle
             if (plots(4)== 1)
                 figure(33)
                 for i = 1:4
+                    figure(33),set(gca,'FontSize',18);
                     subplot(4,1,i)
                     plot(t, F(i,:), 'Color', this.cor, 'linewidth', 1); 
                     hold on;
@@ -871,6 +875,7 @@ classdef quadHibridoproposta < handle
             if (plots(5)== 1)
                 figure(34)
                 for i = 1:3
+                    figure(34),set(gca,'FontSize',18);
                     subplot(3,1,i)
                     plot(t, forca1(i,:), 'Color', 0.7*'b', 'linewidth', 1); 
                     hold on;
@@ -890,7 +895,7 @@ classdef quadHibridoproposta < handle
                 legend('motor','peso','empuxo','arrasto','coriolis');
             end
             if (plots(6)== 1)
-                figure(35)
+                figure(35),set(gca,'FontSize',18);
                 subplot(3,1,1)
                 plot(t, p(3,:), 'Color', this.cor, 'linewidth', 1); hold on;
                 ylabel(['$$z$$ [m.]'], 'Interpreter','latex')
@@ -921,7 +926,7 @@ classdef quadHibridoproposta < handle
                 legend('motor','peso','empuxo','arrasto','coriolis');
             end
             if (plots(7)== 1)
-                figure(36),set(gca,'FontSize',18);
+                figure(36),set(gca,'FontSize',16);
                 subplot(2,1,1)
                 yyaxis left
                 plot(t, forca1(3,:), '-', 'Color', 'b', 'linewidth', 1); 
@@ -948,7 +953,7 @@ classdef quadHibridoproposta < handle
                 title('Sem transição');
             end
             if (plots(8)== 1)
-                figure(38);
+                figure(38), set(gca,'FontSize',18);
                 subplot(3,1,1);
                 plot(t, p(3,:), 'Color', this.cor, 'linewidth', 1); hold on;
                 ylabel(['$$z$$ [m.]'], 'Interpreter','latex')
@@ -961,6 +966,30 @@ classdef quadHibridoproposta < handle
                 xlim([t(1) fim])
                 box off;
                 xlabel('time [sec.]')
+                subplot(3,1,3)
+                plot(t, at(3,:), 'Color', this.cor, 'linewidth', 1); 
+                hold on;
+                ylabel('$$a_t[m/s^2]$$', 'Interpreter','latex')
+                xlim([t(1) fim])
+                box off;
+                xlabel('time [sec.]');
+            end
+            if (plots(9)== 1)
+                figure(39),set(gca,'FontSize',18);
+                subplot(3,1,1);
+                plot(t, p(3,:), 'Color', this.cor, 'linewidth', 1); hold on;
+                ylabel(['$$z$$ [m.]'], 'Interpreter','latex')
+                xlim([t(1) fim])
+                box off;
+                xlabel('time [sec.]')
+                figure(39),set(gca,'FontSize',18);
+                subplot(3,1,2)
+                plot(t, v(3,:), 'Color', this.cor, 'linewidth', 1); hold on;
+                ylabel(['$$v_z$$ [m./sec.]'], 'Interpreter','latex')
+                xlim([t(1) fim])
+                box off;
+                xlabel('time [sec.]')
+                figure(39),set(gca,'FontSize',18);
                 subplot(3,1,3)
                 plot(t, at(3,:), 'Color', this.cor, 'linewidth', 1); 
                 hold on;

@@ -9,7 +9,6 @@ classdef prop_air_water2 < handle
         % system parameters
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         l;  % braco do motor
-        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % environment parameters
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
