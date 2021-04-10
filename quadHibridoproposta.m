@@ -945,7 +945,29 @@ classdef quadHibridoproposta < handle
                 box off;
                 xlabel('time [sec.]')
                 legend('motor','peso','empuxo','coriolis','arrasto');
-                title("Sem transição");
+                title('Sem transição');
+            end
+            if (plots(8)== 1)
+                figure(38);
+                subplot(3,1,1);
+                plot(t, p(3,:), 'Color', this.cor, 'linewidth', 1); hold on;
+                ylabel(['$$z$$ [m.]'], 'Interpreter','latex')
+                xlim([t(1) fim])
+                box off;
+                xlabel('time [sec.]')
+                subplot(3,1,2)
+                plot(t, v(3,:), 'Color', this.cor, 'linewidth', 1); hold on;
+                ylabel(['$$v_z$$ [m./sec.]'], 'Interpreter','latex')
+                xlim([t(1) fim])
+                box off;
+                xlabel('time [sec.]')
+                subplot(3,1,3)
+                plot(t, at(3,:), 'Color', this.cor, 'linewidth', 1); 
+                hold on;
+                ylabel('$$a_t[m/s^2]$$', 'Interpreter','latex')
+                xlim([t(1) fim])
+                box off;
+                xlabel('time [sec.]');
             end
         end
     end

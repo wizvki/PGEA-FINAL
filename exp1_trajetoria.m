@@ -1,5 +1,5 @@
 clear all;
-close all;
+%close all;
 clc;
 
 addpath('auxx/');
@@ -54,8 +54,8 @@ p = [p1 p2];
 % Hydrone V1
 %uav{1} = quadHibrido(x, 'aw', [1 0 1]);
 % Hydrone V2
-uav{1} = quadHibridoproposta(x1, 'b');
-uav{2} = quadHibridoproposta2(x2, 'r');
+uav{1} = quadHibridoproposta2(x1, 'b');
+%uav{2} = quadHibridoproposta2(x2, 'r');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % main loop
@@ -73,14 +73,14 @@ para=1;
 % figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.8586   0.0654    0.9200    0.9680]);%posicao hp canto superior esquerda
 
 figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.8586   -0.1854    0.8544    0.9680]);%posicao hp esquerda
-
-set(figure(10),'name','figure_name','numbertitle','on') % Setting the name of the figure
+figure(10), ,set(gca,'FontSize',18);
+set(figure(10),'name','Simulação','numbertitle','on') % Setting the name of the figure
 clf(figure(10)) % Erase the contents of the figure
 
-plots = [0 0 0 0 0 0 1];%define quais plots quer visualizar
+plots = [0 0 0 0 0 0 0 0 1];%define quais plots quer visualizar
 if (plots(1)==1)%posicao%orientacao
-    %figure(30), clf, set(gcf, 'Position', [562.6000  360.2000  560.0000  420.0000]);
-    figure(30), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
+    figure(30), clf, set(gcf, 'Position', [562.6000  360.2000  560.0000  420.0000]);
+    %figure(30), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
 end
 if (plots(2)==1)%velocidade linear %angular
     %figure(31), clf, set(gcf, 'Position', [ 562.6000  360.2000  560.0000  420.0000]);
@@ -102,11 +102,19 @@ if (plots(6)==1)%z; v_z; f_z
     %figure(35), clf, set(gcf, 'Position', [ 2250.6    243.4    561.6    538.4]);
     figure(35), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
 end
-
 if (plots(7)==1)% f_z ambos 
     %figure(36), clf, set(gcf, 'Position', [ 2250.6    243.4    561.6    538.4]);
     figure(36), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
 end
+if (plots(8)==1)% a_z  
+    %figure(38), clf, set(gcf, 'Position', [ -12.6000  362.6000  560.0000  420.0000]);
+    figure(38), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
+end
+if (plots(9)==1)% a_z  
+    %figure(39), clf, set(gcf, 'Position', [ -12.6000  362.6000  560.0000  420.0000]);
+    figure(39), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
+end
+
 while (uav{1}.time() < tf)% && (min(wps) <= length(traj))    
     
     % atualiza modelo
@@ -123,16 +131,11 @@ while (uav{1}.time() < tf)% && (min(wps) <= length(traj))
             wps(u) = wps(u) + 1;
         end
     end
-    
-    if (para == 1)
-        pause(5);
-        para = 0;
-    end
-    
+  
     desenha = true;
     
     % desenha
-    if (mod(uav{1}.time, 1/2) < 1/200) && (desenha)
+    if (mod(uav{1}.time, 1/2) < 1/100) && (desenha)
         uav{1}.time
         figure(10), clf;
         % desenha drones
@@ -160,6 +163,10 @@ while (uav{1}.time() < tf)% && (min(wps) <= length(traj))
         drawnow;
         for u = 1:length(uav)
             uav{u}.plot(plots, tf);      
+        end
+        if (para == 1)
+            w = waitforbuttonpress;%pause(5);
+            para = 0;
         end
     end
     
