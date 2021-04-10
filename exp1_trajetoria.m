@@ -135,8 +135,8 @@ while (uav{1}.time() < tf)% && (min(wps) <= length(traj))
     desenha = true;
     
     % desenha
-    if (mod(uav{1}.time, 1/2) < 1/100) && (desenha)
-        uav{1}.time
+    if (mod(uav{1}.time, 1/100) < .001) && (desenha)
+        uav{1}.time;
         figure(10), clf;
         % desenha drones
         for u = 1:length(uav)
