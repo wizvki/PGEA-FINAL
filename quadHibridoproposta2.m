@@ -337,7 +337,7 @@ classdef quadHibridoproposta2 < handle
             % <matlab:matlab.desktop.editor.openDocument(which('prop_water.m')).goToFunction('getRho')
             % getRho(this)>
             % 
-            rho = this.getRho2()
+            rho = this.getRho2();
             
             % massa adicionais --> "George Green 1833"
             added_mass = ((4/6)*pi*(this.rc^3))*rho;
@@ -808,7 +808,7 @@ classdef quadHibridoproposta2 < handle
                     ylabel(['$$' labels{i} '$$ [m.]'], 'Interpreter','latex')
                     xlim([t(1) fim])
                     box off;
-                    xlabel('time [sec.]')
+                    xlabel('tempo [s]', 'Interpreter','latex')
                 end
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 labels = {'\phi', '\theta', '\psi'};
@@ -821,7 +821,7 @@ classdef quadHibridoproposta2 < handle
                     ylabel(['$$' labels{i} '$$ [deg.]'], 'Interpreter','latex')
                     xlim([t(1) fim])
                     box off;
-                    xlabel('time [sec.]')
+                    xlabel('tempo [s]', 'Interpreter','latex')
                 end
             end
 
@@ -836,7 +836,7 @@ classdef quadHibridoproposta2 < handle
                     ylabel(['$$' labels{i} '$$ [m./sec.]'], 'Interpreter','latex')
                     xlim([t(1) fim])
                     box off;
-                    xlabel('time [sec.]')
+                    xlabel('tempo [s]', 'Interpreter','latex')
                 end
                 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 labels = {'p', 'q', 'r'};
@@ -847,7 +847,7 @@ classdef quadHibridoproposta2 < handle
                     ylabel(['$$' labels{i} '$$ [deg./sec.]'], 'Interpreter','latex')
                     xlim([t(1) fim])
                     box off;
-                    xlabel('time [sec.]')
+                    xlabel('tempo [s]', 'Interpreter','latex')
                 end
             end
 
@@ -862,7 +862,7 @@ classdef quadHibridoproposta2 < handle
                     ylabel('$$\vec{\Omega}$$ [rpm]', 'Interpreter','latex')
                     xlim([t(1) fim])
                     box off;
-                    xlabel('time [sec.]')
+                    xlabel('tempo [s]', 'Interpreter','latex')
                 end
             end
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -876,7 +876,7 @@ classdef quadHibridoproposta2 < handle
                     ylabel('$$\vec{F}$$ [N]', 'Interpreter','latex')
                     xlim([t(1) fim])
                     box off;
-                    xlabel('time [sec.]')
+                    xlabel('tempo [s]', 'Interpreter','latex')
                 end
             end
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -899,7 +899,7 @@ classdef quadHibridoproposta2 < handle
                     xlim([t(1) t(end)])
                     xlim([t(1) fim])
                     box off;
-                    xlabel('time [sec.]')
+                    xlabel('tempo [s]', 'Interpreter','latex')
                 end
                 legend('motor','peso','empuxo','arrasto','coriolis');
             end
@@ -910,33 +910,16 @@ classdef quadHibridoproposta2 < handle
                 ylabel(['$$z$$ [m.]'], 'Interpreter','latex')
                 xlim([t(1) fim])
                 box off;
-                xlabel('time [sec.]')
+                xlabel('tempo [s]', 'Interpreter','latex')
+                figure(35),set(gca,'FontSize',18);
                 subplot(3,1,2)
                 plot(t, v(3,:), 'Color', this.cor, 'linewidth', 1); hold on;
                 ylabel(['$$v_z$$ [m./sec.]'], 'Interpreter','latex')
                 xlim([t(1) fim])
                 box off;
-                xlabel('time [sec.]')
+                xlabel('tempo [s]', 'Interpreter','latex')
+                figure(35),set(gca,'FontSize',18);
                 subplot(3,1,3)
-                plot(t, forca1(3,:), 'Color', 'b', 'linewidth', 1); 
-                hold on;
-                plot(t, forca2(3,:), 'Color', 'g', 'linewidth', 1); 
-                hold on;
-                plot(t, forca3(3,:), 'Color', 'r', 'linewidth', 1); 
-                hold on;
-                plot(t, forca4(3,:), 'Color', 'c', 'linewidth', 1); 
-                hold on;
-                plot(t, forca5(3,:), 'Color', 'k', 'linewidth', 1); 
-                ylabel(['$$f_z$$ [N]'], 'Interpreter','latex')
-                xlim([t(1) t(end)])
-                xlim([t(1) fim])
-                box off;
-                xlabel('time [sec.]')
-                legend('motor','peso','empuxo','arrasto','coriolis');
-            end
-            if (plots(7)== 1)
-                figure(36),set(gca,'FontSize',16);
-                subplot(2,1,2)
                 yyaxis left
                 plot(t, forca1(3,:), '-', 'Color', 'b', 'linewidth', 1); 
                 hold on;
@@ -954,12 +937,40 @@ classdef quadHibridoproposta2 < handle
                 plot(t, forca5(3,:), '-', 'Color', 'k', 'linewidth', 1);
                 hold off;
                 ylabel(['$$f_z$$ [N]'], 'Interpreter','latex')
-                xlim([t(1) t(end)])
                 xlim([t(1) fim])
                 box off;
-                xlabel('time [sec.]')
+                xlabel('tempo [s]', 'Interpreter','latex')
+                legend('motor','peso','empuxo','coriolis','arrasto');
+                figure(35),set(gca,'FontSize',18);
+            end
+            if (plots(7)== 1)
+                figure(36),set(gca,'FontSize',16);
+                subplot(2,1,2)
+                yyaxis left
+                plot(t, forca1(3,:), '-', 'Color', 'b', 'linewidth', 1); 
+                hold on;
+                yyaxis left
+                plot(t, forca2(3,:), '-', 'Color', 'g', 'linewidth', 1); 
+                hold on;
+                yyaxis left
+                plot(t, forca3(3,:), '-', 'Color', 'c', 'linewidth', 1); 
+                hold on;
+                yyaxis right
+                plot(t, forca4(3,:),'-', 'Color', 'r', 'linewidth', 1); 
+                hold on;
+                ylabel(['arrasto $$f_z$$ [N]'], 'Interpreter','latex')
+                yyaxis left
+                plot(t, forca5(3,:), '-', 'Color', 'k', 'linewidth', 1);
+                hold off;
+                ylabel(['$$f_z$$ [N]'], 'Interpreter','latex')
+                xlim([t(1) fim]);
+                %xticks([0:fim]);
+                xticks([0:0.2:fim]);
+                box off;
+                xlabel('tempo [s]', 'Interpreter','latex')
                 legend('motor','peso','empuxo','coriolis','arrasto');
                 title('Com transição');
+                figure(36),set(gca,'FontSize',16);
             end
             if (plots(9)== 1)
                 figure(39),set(gca,'FontSize',18);
@@ -968,14 +979,14 @@ classdef quadHibridoproposta2 < handle
                 ylabel(['$$z$$ [m.]'], 'Interpreter','latex')
                 xlim([t(1) fim])
                 box off;
-                xlabel('time [sec.]')
+                xlabel('tempo [s]', 'Interpreter','latex')
                 figure(39),set(gca,'FontSize',18);
                 subplot(3,1,2)
                 plot(t, v(3,:), 'Color', this.cor, 'linewidth', 1); hold on;
                 ylabel(['$$v_z$$ [m./sec.]'], 'Interpreter','latex')
                 xlim([t(1) fim])
                 box off;
-                xlabel('time [sec.]')
+                xlabel('tempo [s]', 'Interpreter','latex')
                 figure(39),set(gca,'FontSize',18);
                 subplot(3,1,3)
                 plot(t, at(3,:), 'Color', this.cor, 'linewidth', 1); 
@@ -983,7 +994,7 @@ classdef quadHibridoproposta2 < handle
                 ylabel('$$a_t[m/s^2]$$', 'Interpreter','latex')
                 xlim([t(1) fim])
                 box off;
-                xlabel('time [sec.]');
+                xlabel('tempo [s]', 'Interpreter','latex');
                 figure(39),set(gca,'FontSize',18);
             end
         end
