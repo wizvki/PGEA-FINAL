@@ -8,22 +8,37 @@ classdef quadHibridoproposta1 < handle
         % ROSA, et al. A Comparative Study on Sigma Point Kalman Filters for 
         % Trajectory Estimation of Hybrid Aerial-Aquatic Vehicles. IROS`18.
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ate aq
-        m = (.9)*1.42887;        % [kg] uav mass
-        % momentos de inercia
+       % momentos de inercia
         I = [   144648.98   2041.46     -7870.33
                 2041.46     288179.61   -1157.20
                 -7870.33    -1157.20    154104.84]*1e-7;
         %
-        rc = 0.27/4;   % raio do centro
-        l = 0.27 + rc;   % [m] wing span
-        vol = (1.1)*1.42887e-03;  % Volume [m^3]
+        rc = 0.27/4;                % raio do centro
+        l_braco ;                   %tamanho ddo braço
+        l;                          % [m] wing span
+        d_braco = 0.02;             %diametro do braco
+%         vol = (1.1)*1.42887e-03;    % Volume [m^3]
+        vol = 1.5427e-03;             % Volume [m^3]
+        m;                          % [kg] uav mass
         contraroting_dist = .1;     % [m] altura
         
-        Cp = diag([2.5; 2.5; 9.99])*1e-2;    % coeficiente de arrasto de translacao
-        Cr = diag([1.25; 1.25; 1.25*2])*1e-2;    % coeficiente de arrasto de rotacao
+%         Cp = diag([2.5; 2.5; 9.99])*1e-2;    % coeficiente de arrasto de translacao
+%         Cr = diag([1.25; 1.25; 1.25*2])*1e-2;    % coeficiente de arrasto de rotacao
+        %C_D esfera = 0.47
+        %C_D cilindro frontal = 0.82
+        %C_D cilindro transversal = 1.17
+        %Cp_x = C_D esfera * pi * r^2
+        Cpx;
+        Cpy;
+        Cpz;
+        Crx;
+        Cry;
+        Crz;
+        Cp;    % coeficiente de arrasto de translacao
+        Cr;    % coeficiente de arrasto de rotacao
         %%%%%%%%%%%calculado depois
-%        Cp = diag([1.723; 1.723; 2.568])*1e-2;    % coeficiente de arrasto de translacao
-%        Cr = diag([0.9477; 0.9477; 1.8954])*1e-2;    % coeficiente de arrasto de rotacao
+%        Cp = diag([1.6321; 1.6321; 2.568]);    % coeficiente de arrasto de translacao
+%        Cr = diag([0.00473; 0.00473; 0.009477]);    % coeficiente de arrasto de rotacao
         
         maxAngAir = deg2rad(30); % [rad]
         maxAngWat = deg2rad(65); % [rad]
@@ -353,7 +368,7 @@ classdef quadHibridoproposta1 < handle
             
             %% gravidade
             % $$f_2 = - m g$$
-            f(:,2) = -this.m*this.g; 
+            f(:,2) = -this.m.*this.g; 
             
             %% arquimedes (empuxo)
             % $$f_3 = \rho vol g$$
@@ -562,7 +577,24 @@ classdef quadHibridoproposta1 < handle
         % construtor
         function this = quadHibridoproposta1(x, cor)
             
-            % saturacoes de angulos
+            this.l_braco = 0.27 - this.rc;        %tamanho ddo braço
+            this.l = this.l_braco + this.rc;           % [m] wing span
+            this.m = (.9)*this.vol*1000;          % [kg] uav mass
+            %g=this.g
+            %C_D esfera = 0.47
+            %C_D cilindro frontal = 0.82
+            %C_D cilindro transversal = 1.17
+            %Cp_x = C_D esfera * pi * r^2
+            this.Cpx = 0.47*pi*this.rc^2 + 2*1.17*this.l_braco*this.d_braco + 1.17*(this.d_braco/2)^2;
+            this.Cpy = 0.47*pi*this.rc^2 + 2*1.17*this.l_braco*this.d_braco + 1.17*(this.d_braco/2)^2;
+            this.Cpz = 0.47*pi*this.rc^2 + 4*1.17*this.l_braco*this.d_braco;
+            this.Crx = 1.17*this.l_braco*this.d_braco;
+            this.Cry = 1.17*this.l_braco*this.d_braco;
+            this.Crz = 2*1.17*this.l_braco*this.d_braco;
+            this.Cp = diag([this.Cpx; this.Cpy; this.Cpz]);    % coeficiente de arrasto de translacao
+            this.Cr = diag([this.Crx; this.Cry; this.Crz]);    % coeficiente de arrasto de rotacao
+
+                % saturacoes de angulos
             this.satAngAir = saturation(this.maxAngAir*[-1; 1]);
             this.satAngWat = saturation(this.maxAngWat*[-1; 1]);
             
