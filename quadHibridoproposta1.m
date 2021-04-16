@@ -1,5 +1,5 @@
 
-classdef quadHibridoproposta < handle
+classdef quadHibridoproposta1 < handle
     %aq1 % descrição do arquivo %propriedades privado
     properties (SetAccess = private, GetAccess = private)
         %aq2% descricao quando bota na janela de comando 'help quadHibridoproposta'
@@ -14,9 +14,9 @@ classdef quadHibridoproposta < handle
                 2041.46     288179.61   -1157.20
                 -7870.33    -1157.20    154104.84]*1e-7;
         %
-        vol = (1.1)*1.42887e-03;  % Volume [m^3]
-        l = 0.27;   % [m] wing span
         rc = 0.27/4;   % raio do centro
+        l = 0.27 + rc;   % [m] wing span
+        vol = (1.1)*1.42887e-03;  % Volume [m^3]
         contraroting_dist = .1;     % [m] altura
         
         Cp = diag([2.5; 2.5; 9.99])*1e-2;    % coeficiente de arrasto de translacao
@@ -560,7 +560,7 @@ classdef quadHibridoproposta < handle
     %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     methods (Access = public)
         % construtor
-        function this = quadHibridoproposta(x, cor)
+        function this = quadHibridoproposta1(x, cor)
             
             % saturacoes de angulos
             this.satAngAir = saturation(this.maxAngAir*[-1; 1]);
@@ -741,10 +741,10 @@ classdef quadHibridoproposta < handle
             id2 = find(z < 0);
             % trajetoria aerea
             plot3(this.hyst.x(1,id1), this.hyst.x(2,id1), this.hyst.x(3,id1), ...
-                '-', 'Color', .7*[0 1 1], 'linewidth', 2);
+                '-', 'Color', .7*[1 0 0], 'linewidth', 2);
             % trajetoria aquatica
             plot3(this.hyst.x(1,id2), this.hyst.x(2,id2), this.hyst.x(3,id2), ...
-                '-', 'Color', .7*[0 0 1], 'linewidth', 2);
+                '-', 'Color', .7*[1 0 1], 'linewidth', 2);
             
             xlabel('x[m]')
             ylabel('y[m]')
@@ -808,8 +808,6 @@ classdef quadHibridoproposta < handle
                     box off;
                     xlabel('$$tempo [s]$$', 'Interpreter','latex')
                 end
-%                 plot(t_faixa, faixa_max, '--', 'Color', 0.3*[0 0 0], 'linewidth', 1); hold on;
-%                 plot(t_faixa, faixa_min, '--', 'Color', 0.3*[0 0 0], 'linewidth', 1); hold on;
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 labels = {'\phi', '\theta', '\psi'};
                 sp = [2 1 3];
@@ -925,7 +923,7 @@ classdef quadHibridoproposta < handle
             end
             if (plots(6)== 1)
                 figure(35),set(gca,'FontSize',18);
-                subplot(3,2,1);
+                subplot(3,2,2);
                 plot(t, p(3,:), 'Color', this.cor, 'linewidth', 1); hold on;
 %                 plot(t_faixa, faixa_max, '--', 'Color', 0.3*[0 0 0], 'linewidth', 1); hold on;
 %                 plot(t_faixa, faixa_min, '--', 'Color', 0.3*[0 0 0], 'linewidth', 1); hold on;
@@ -937,7 +935,7 @@ classdef quadHibridoproposta < handle
                 box off;
                 xlabel('$$tempo [s]$$', 'Interpreter','latex')
                 figure(35),set(gca,'FontSize',18);
-                title('Coeficientes 1x');
+                title('Coeficientes 5x');
                 subplot(3,2,3)
                 plot(t, v(3,:), 'Color', this.cor, 'linewidth', 1); hold on;
                 ylabel(['$$v_z [m/s]$$'], 'Interpreter','latex')
@@ -977,7 +975,7 @@ classdef quadHibridoproposta < handle
             end
             if (plots(7)== 1)
                 figure(36),set(gca,'FontSize',16);
-                subplot(2,1,1)
+                subplot(2,1,2)
 %                 yyaxis left
 %                 plot(t, forca1(3,:), '-', 'Color', 'b', 'linewidth', 1); 
 %                 hold on;
@@ -1002,20 +1000,13 @@ classdef quadHibridoproposta < handle
                 %xticks([0:5:fim]);
                 box off;
                 xlabel('$$tempo [s]$$', 'Interpreter','latex')
-%                 legend('motor','peso','empuxo','coriolis','arrasto');
-%                 title('Sem transição');
-                
-                %estudo
-                legend('peso','empuxo');
-                title('Volume 1x');
+                title('Coeficientes 5x');
                 figure(36),set(gca,'FontSize',16);
             end
             if (plots(8)== 1)
                 figure(38), set(gca,'FontSize',18);
                 subplot(3,1,1);
                 plot(t, p(3,:), 'Color', this.cor, 'linewidth', 1); hold on;
-%                 plot(t_faixa, faixa_max, '--', 'Color', 0.3*[0 0 0], 'linewidth', 1); hold on;
-%                 plot(t_faixa, faixa_min, '--', 'Color', 0.3*[0 0 0], 'linewidth', 1); hold on;
                 ylabel(['$$z [m]$$'], 'Interpreter','latex')
                 xlim([t(1) fim])
                 xticks([0:0.5:fim]);
@@ -1073,8 +1064,8 @@ classdef quadHibridoproposta < handle
                     ylabel(['$$f_z [N]$$'], 'Interpreter','latex')
                     xlim([t(1) fim])
                     %xticks([0:fim]);
-                    xticks([0:0.5:fim]);
-                    %xticks([0:2:fim]);
+                    %xticks([0:0.5:fim]);
+                    xticks([0:2:fim]);
                     %xticks([0:5:fim]);
                     box off;
                     xlabel('$$tempo [s]$$', 'Interpreter','latex')

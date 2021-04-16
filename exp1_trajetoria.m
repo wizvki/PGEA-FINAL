@@ -27,7 +27,7 @@ addpath('auxx2/');
 % traj{end+1} = [-5; 5; 5; deg2rad(0)];
 % traj{end+1} = [-5; -5; 5; deg2rad(0)];
 % traj{end+1} = [-5; -5; 0; deg2rad(0)];
-traj{1} = [-5; -5; 0.3; deg2rad(0)];
+traj{1} = [-5; -5; 10; deg2rad(0)];
 % traj{end+1} = [10; -5; -5; deg2rad(0)];
 % traj{end+1} = [10; 10; -5; deg2rad(0)];
 % traj{end+1} = [-10; 10; -5; deg2rad(0)];
@@ -36,14 +36,14 @@ traj{1} = [-5; -5; 0.3; deg2rad(0)];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % condicoes iniciais
-p1 = [-5; -5; 0.5];              % posicao [m]
+p1 = [-5; -5; -0.5];              % posicao [m]
 v1 = [0; 0; 0];              % velocidade [m/s]
 r1 = deg2rad([0; 0; 0]);     % atitude [rad]
 q1 = deg2rad([0; 0; 0]);     % rotacao [rad/s]
 x1 = [p1; r1; v1; q1];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % condicoes iniciais
-p2 = [-4; -5; 0.5];              % posicao [m]
+p2 = [-4; -5; -0.5];              % posicao [m]
 v2 = [0; 0; 0];              % velocidade [m/s]
 r2 = deg2rad([0; 0; 0]);     % atitude [rad]
 q2 = deg2rad([0; 0; 0]);     % rotacao [rad/s]
@@ -55,11 +55,12 @@ p = [p1 p2];
 %uav{1} = quadHibrido(x, 'aw', [1 0 1]);
 % Hydrone V2
 uav{1} = quadHibridoproposta(x1, 'b');
-uav{2} = quadHibridoproposta2(x2, 'r');
+%uav{2} = quadHibridoproposta2(x2, 'r');
+uav{2} = quadHibridoproposta1(x2, 'r');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % main loop
-tf = 2.0;
+tf = 4.0;
 count = 0;
 wps = ones(size(uav));
 chegou = false(size(uav));
@@ -72,17 +73,21 @@ para=1;
 %figure(10), clf, set(gcf, 'Position', 1.0e+03 *[0.3922    0.0386    1.1456    0.7368]);%posicao lg 
 % figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.8586   0.0654    0.9200    0.9680]);%posicao hp canto superior esquerda
 
-figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9098   -0.1854    0.8032    0.9680]);%posicao hp esquerda
+%figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9098   -0.1854    0.8032    0.9680]);%posicao hp esquerda
 set(figure(10),'name','Simulação','numbertitle','on') % Setting the name of the figure
 clf(figure(10)) % Erase the contents of the figure
 
-plots = [0 0 0 0 0 0 1 0 0];%define quais plots quer visualizar
+plots =     [0 0 0 0 0 0 0 1 0 0];%define quais plots quer visualizar na simulacao
+plotsfim =  [1 1 0 0 0 1 1 0 0 0];%define quais plots quer visualizar no final
 if (plots(1)==1)%posicao%orientacao
-    figure(30), clf, set(gcf, 'Position', [562.6000  360.2000  560.0000  420.0000]);
+    %figure(30), clf, set(gcf, 'Position', [562.6000  360.2000  560.0000  420.0000]);
     %figure(30), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
+    figure(30), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.8856    0.9680]);%direita
+    figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9098   -0.1854    0.8032    0.9680]);%posicao hp esquerda
 end
 if (plots(2)==1)%velocidade linear %angular
     %figure(31), clf, set(gcf, 'Position', [ 562.6000  360.2000  560.0000  420.0000]);
+    figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9098   -0.1854    0.8032    0.9680]);%posicao hp esquerda
     figure(31), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]),;%direita
 end
 if (plots(3)==1)%velocidade motor
@@ -93,30 +98,38 @@ if (plots(4)==1)%forcas motores
     %figure(33), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);
     figure(33), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
 end
-if (plots(5)==1)%forca motor, peso, empuxo, arrasto, coriolis 
-    %figure(34), clf, set(gcf, 'Position', [ 2250.6    243.4    561.6    538.4]);
-    figure(34), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
+if (plots(5)==1)%forca motor, peso, empuxo, arrasto, coriolis AMBOS
+    %figure(34), clf, set(gcf, 'Position', [562.6000  360.2000  560.0000  420.0000]);
+    %figure(34), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
+    figure(34), clf, set(gcf, 'Position', 1.0e+03 *[ 2.6226  -0.1862   1.0584   0.968]);%direita
+    figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9154  -0.1862    0.7048   0.968]);%posicao hp esquerda
 end
 if (plots(6)==1)%z; v_z; f_z  
     %figure(35), clf, set(gcf, 'Position', [ 2250.6    243.4    561.6    538.4]);
-    figure(35), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.8816    0.9680]);%direita
+    figure(35), clf, set(gcf, 'Position', 1.0e+03 *[ 2.6226  -0.1862   1.0584   0.968]);%direita
+    figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9154  -0.1862    0.7048   0.968]);%posicao hp esquerda
 end
 if (plots(7)==1)% f_z ambos 
     %figure(36), clf, set(gcf, 'Position', [ 2250.6    243.4    561.6    538.4]);
     figure(36), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.8856    0.9680]);%direita
+    figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9098   -0.1854    0.8032    0.9680]);%posicao hp esquerda
 end
-if (plots(8)==1)% a_z  
+if (plots(8)==1)% a_z ambos
     %figure(38), clf, set(gcf, 'Position', [ -12.6000  362.6000  560.0000  420.0000]);
+    figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9098   -0.1854    0.8032    0.9680]);%posicao hp esquerda
     figure(38), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
 end
-if (plots(9)==1)% a_z  
+if (plots(9)==1)%forca motor, peso, empuxo, arrasto, coriolis quad2
     %figure(39), clf, set(gcf, 'Position', [ -12.6000  362.6000  560.0000  420.0000]);
     figure(39), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
 end
 
+%tempo=uav{1}.time();
+tempo=5;
+dt = 1/500;
 while (uav{1}.time() < tf)% && (min(wps) <= length(traj))    
     
-    figure(10), set(gca,'FontSize',16);
+    %figure(10), set(gca,'FontSize',16);
         
     % atualiza modelo
     for u = 1:length(uav)
@@ -134,10 +147,13 @@ while (uav{1}.time() < tf)% && (min(wps) <= length(traj))
     end
   
     desenha = true;
-    
+    %fora_do_if = uav{1}.time
+    %fora_do_if = tempo
     % desenha
-    if (mod(uav{1}.time, 1/100) < .001) && (desenha)
-        %uav{1}.time;
+    if (tempo >= 5) %&& (desenha)
+    %if (mod(uav{1}.time, 1/100) <= .001) %&& (desenha)
+        %entrei_no_if = uav{1}.time
+        %entrei_no_if = tempo
         figure(10), clf;
         % desenha drones
         for u = 1:length(uav)
@@ -152,11 +168,15 @@ while (uav{1}.time() < tf)% && (min(wps) <= length(traj))
                     [-4 -6], ...
                     [-1 0]);
         % desenha trajetoria
-        wayps = [traj{:}]';
-        plot3(wayps(:,1), wayps(:,2), wayps(:,3), 'k--', 'linewidth', 2), set(gca,'FontSize',16);
+        %wayps = [traj{:}]';
+        %plot3(wayps(:,1), wayps(:,2), wayps(:,3), 'k--', 'linewidth', 2), set(gca,'FontSize',16);
         axis equal;
         axis tight;
-        set(gca,'View',[-35,20]); % set the azimuth and elevation of the plot
+        xlabel(['$$x [N]$$'], 'Interpreter','latex')
+        ylabel(['$$y [N]$$'], 'Interpreter','latex')
+        zlabel(['$$z [N]$$'], 'Interpreter','latex')
+        
+        set(gca,'View',[-35,20],'FontSize',16); % set the azimuth and elevation of the plot
         grid on;
         hold off;
         drawnow;
@@ -167,9 +187,10 @@ while (uav{1}.time() < tf)% && (min(wps) <= length(traj))
             w = waitforbuttonpress;%pause(5);
             para = 0;
         end
+        tempo = 0;
     end
-    figure(10), set(gca,'FontSize',16);
-        
+    %tempo = tempo + dt;
+    tempo = tempo + 1;
 end                    
                     
 % imprime em pdf
@@ -187,6 +208,6 @@ end
 % end
 % 
 % plota graficos
-% for u = 1:length(uav)
-%     uav{u}.plot();
-% end
+for u = 1:length(uav)
+    uav{u}.plot(plotsfim, tf);
+end
