@@ -5,10 +5,7 @@ classdef quadHibridoproposta1 < handle
         %aq2% descricao quando bota na janela de comando 'help quadHibridoproposta'
         % system parameters
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % ROSA, et al. A Comparative Study on Sigma Point Kalman Filters for 
-        % Trajectory Estimation of Hybrid Aerial-Aquatic Vehicles. IROS`18.
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ate aq
-       % momentos de inercia
+        % momentos de inercia
         I = [   144648.98   2041.46     -7870.33
                 2041.46     288179.61   -1157.20
                 -7870.33    -1157.20    154104.84]*1e-7;
@@ -17,13 +14,11 @@ classdef quadHibridoproposta1 < handle
         l_braco ;                   %tamanho ddo braço
         l;                          % [m] wing span
         d_braco = 0.02;             %diametro do braco
-%         vol = (1.1)*1.42887e-03;    % Volume [m^3]
-        vol = 1.5427e-03;             % Volume [m^3]
+        %vol=(4/3)*pi*rc^3+4*pi*(d_braco/2)^2*l_braco
+        vol; %= 1.5427e-03;             % Volume [m^3]
         m;                          % [kg] uav mass
         contraroting_dist = .1;     % [m] altura
         
-%         Cp = diag([2.5; 2.5; 9.99])*1e-2;    % coeficiente de arrasto de translacao
-%         Cr = diag([1.25; 1.25; 1.25*2])*1e-2;    % coeficiente de arrasto de rotacao
         %C_D esfera = 0.47
         %C_D cilindro frontal = 0.82
         %C_D cilindro transversal = 1.17
@@ -36,9 +31,9 @@ classdef quadHibridoproposta1 < handle
         Crz;
         Cp;    % coeficiente de arrasto de translacao
         Cr;    % coeficiente de arrasto de rotacao
-        %%%%%%%%%%%calculado depois
-%        Cp = diag([1.6321; 1.6321; 2.568]);    % coeficiente de arrasto de translacao
-%        Cr = diag([0.00473; 0.00473; 0.009477]);    % coeficiente de arrasto de rotacao
+        %%%%%%%%%%%calculado 
+%        Cp = diag([1.6321; 1.6321; 2.568])*1e-2;    % coeficiente de arrasto de translacao
+%        Cr = diag([0.473; 0.473; 0.9477])*1e-2;    % coeficiente de arrasto de rotacao
         
         maxAngAir = deg2rad(30); % [rad]
         maxAngWat = deg2rad(65); % [rad]
@@ -71,7 +66,7 @@ classdef quadHibridoproposta1 < handle
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % tempo
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        dt = (1/500);   % 500Hz de frequencia interna
+        dt = (1/100);   % 500Hz de frequencia interna
         t = 0;          % relogio
     end
     %propriedades publico%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -579,8 +574,9 @@ classdef quadHibridoproposta1 < handle
             
             this.l_braco = 0.27 - this.rc;        %tamanho ddo braço
             this.l = this.l_braco + this.rc;           % [m] wing span
-            this.m = (.9)*this.vol*1000;          % [kg] uav mass
-            %g=this.g
+            this.vol = (4/3)*pi*this.rc^3+4*pi*(this.d_braco/2)^2*this.l_braco;
+            this.m = (.9)*this.vol*1e3;          % [kg] uav mass
+            
             %C_D esfera = 0.47
             %C_D cilindro frontal = 0.82
             %C_D cilindro transversal = 1.17
@@ -594,7 +590,7 @@ classdef quadHibridoproposta1 < handle
             this.Cp = diag([this.Cpx; this.Cpy; this.Cpz]);    % coeficiente de arrasto de translacao
             this.Cr = diag([this.Crx; this.Cry; this.Crz]);    % coeficiente de arrasto de rotacao
 
-                % saturacoes de angulos
+            % saturacoes de angulos
             this.satAngAir = saturation(this.maxAngAir*[-1; 1]);
             this.satAngWat = saturation(this.maxAngWat*[-1; 1]);
             
@@ -922,10 +918,9 @@ classdef quadHibridoproposta1 < handle
             labels = {'f_x', 'f_y', 'f_z'};
             if (plots(5)== 1)
                 figure(34)
-                %legend('motor','peso','empuxo','coriolis','arrasto');
                 for i = 1:3
                     figure(34),set(gca,'FontSize',18);
-                    subplot(3,2,(2*i)-1)
+                    subplot(3,2,(2*i))
                     yyaxis left
                     plot(t, forca1(i,:), '-', 'Color', 'b', 'linewidth', 1); 
                     hold on;
@@ -950,15 +945,18 @@ classdef quadHibridoproposta1 < handle
                     %xticks([0:5:fim]);
                     box off;
                     xlabel('$$tempo [s]$$', 'Interpreter','latex')
+                    if (i == 3)
+                        title('Modificado');
+%                         title('Sem transição');
+                        legend('motor','peso','empuxo','coriolis','arrasto');
+                    end
                 end
                 figure(34),set(gca,'FontSize',18);
             end
             if (plots(6)== 1)
                 figure(35),set(gca,'FontSize',18);
-                subplot(3,2,2);
+                subplot(3,1,1);
                 plot(t, p(3,:), 'Color', this.cor, 'linewidth', 1); hold on;
-%                 plot(t_faixa, faixa_max, '--', 'Color', 0.3*[0 0 0], 'linewidth', 1); hold on;
-%                 plot(t_faixa, faixa_min, '--', 'Color', 0.3*[0 0 0], 'linewidth', 1); hold on;
                 ylabel(['$$z [m]$$'], 'Interpreter','latex')
                 xlim([t(1) fim])
                 xticks([0:0.5:fim]);
@@ -967,9 +965,9 @@ classdef quadHibridoproposta1 < handle
                 box off;
                 xlabel('$$tempo [s]$$', 'Interpreter','latex')
                 figure(35),set(gca,'FontSize',18);
-                title('Coeficientes 5x');
-                subplot(3,2,3)
-                plot(t, v(3,:), 'Color', this.cor, 'linewidth', 1); hold on;
+                subplot(3,1,2)
+                plot(t, v(3,:), 'Color', this.cor, 'linewidth', 1); 
+                hold on;
                 ylabel(['$$v_z [m/s]$$'], 'Interpreter','latex')
                 xlim([t(1) fim])
                 xticks([0:0.5:fim]);
@@ -978,53 +976,41 @@ classdef quadHibridoproposta1 < handle
                 box off;
                 xlabel('$$tempo [s]$$', 'Interpreter','latex')
                 figure(35),set(gca,'FontSize',18);
-                subplot(3,2,5)
-%                 yyaxis left
-%                 plot(t, forca1(3,:), '-', 'Color', 'b', 'linewidth', 1); 
-%                 hold on;
-%                 yyaxis left
-%                 plot(t, forca2(3,:), '-', 'Color', 'g', 'linewidth', 1); 
-%                 hold on;
-%                 yyaxis left
-%                 plot(t, forca3(3,:), '-', 'Color', 'c', 'linewidth', 1); 
-%                 hold on;
-%                 yyaxis right
-                plot(t, forca4(3,:),'-', 'Color', 'r', 'linewidth', 1); 
-%                 hold on;
+                subplot(3,1,3)
+                hold on;
+                plot(t, forca4(3,:),'-', 'Color', this.cor, 'linewidth', 1); 
                 ylabel(['$$arrasto f_z [N]$$'], 'Interpreter','latex')
-%                 yyaxis left
-%                 plot(t, forca5(3,:), '-', 'Color', 'k', 'linewidth', 1);
+                legend('original','novo');
+%                 legend('sem transição','com transição');
                 hold off;
-%                 ylabel(['$$f_z [N]$$'], 'Interpreter','latex')
                 xlim([t(1) fim])
                 xticks([0:0.5:fim]);
                 %xticks([0:2:fim]);
                 %xticks([0:5:fim]);
                 box off;
                 xlabel('$$tempo [s]$$', 'Interpreter','latex')
-                %legend('motor','peso','empuxo','coriolis','arrasto');
                 figure(35),set(gca,'FontSize',18);
             end
             if (plots(7)== 1)
                 figure(36),set(gca,'FontSize',16);
                 subplot(2,1,2)
-%                 yyaxis left
-%                 plot(t, forca1(3,:), '-', 'Color', 'b', 'linewidth', 1); 
-%                 hold on;
-%                 yyaxis left
-%                 plot(t, forca2(3,:), '-', 'Color', 'g', 'linewidth', 1); 
-%                 hold on;
-%                 yyaxis left
-%                 plot(t, forca3(3,:), '-', 'Color', 'c', 'linewidth', 1); 
-%                 hold on;
-%                 yyaxis right
+                yyaxis left
+                plot(t, forca1(3,:), '-', 'Color', 'b', 'linewidth', 1); 
+                hold on;
+                yyaxis left
+                plot(t, forca2(3,:), '-', 'Color', 'g', 'linewidth', 1); 
+                hold on;
+                yyaxis left
+                plot(t, forca3(3,:), '-', 'Color', 'c', 'linewidth', 1); 
+                hold on;
+                yyaxis right
                 plot(t, forca4(3,:), '-', 'Color', 'r', 'linewidth', 1); 
-%                 hold on;
-%                 ylabel(['arrasto $$f_z$$ [N]'], 'Interpreter','latex')
-%                 yyaxis left
-%                 plot(t, forca5(3,:), 'Color', 'k', 'linewidth', 1);
+                hold on;
+                ylabel(['arrasto $$f_z$$ [N]'], 'Interpreter','latex')
+                yyaxis left
+                plot(t, forca5(3,:), 'Color', 'k', 'linewidth', 1);
                 hold off;
-%                 ylabel(['$$f_z [N]$$'], 'Interpreter','latex')
+                ylabel(['$$f_z [N]$$'], 'Interpreter','latex')
                 xlim([t(1) fim])
                 %xticks([0:fim]);
                 xticks([0:0.5:fim]);
@@ -1032,7 +1018,9 @@ classdef quadHibridoproposta1 < handle
                 %xticks([0:5:fim]);
                 box off;
                 xlabel('$$tempo [s]$$', 'Interpreter','latex')
-                title('Coeficientes 5x');
+                title('Modificado');
+%                 title('Com transição');
+                legend('motor','peso','empuxo','coriolis','arrasto');
                 figure(36),set(gca,'FontSize',16);
             end
             if (plots(8)== 1)
@@ -1065,13 +1053,15 @@ classdef quadHibridoproposta1 < handle
                 xticks([0:0.5:fim]);
                 %xticks([0:2:fim]);
                 %xticks([0:5:fim]);
+                legend('original','novo');
+%                 legend('sem transição','com transição');
                 box off;
                 xlabel('$$tempo [s]$$', 'Interpreter','latex');
                 figure(38), set(gca,'FontSize',18);
             end
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             labels = {'f_x', 'f_y', 'f_z'};
-            if (plots(10)== 1)
+            if (plots(9)== 1)
                 figure(34)
                 legend('motor','peso','empuxo','coriolis','arrasto');
                 for i = 1:3

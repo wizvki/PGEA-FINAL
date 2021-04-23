@@ -36,16 +36,16 @@ traj{1} = [-5; -5; 10; deg2rad(0)];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % condicoes iniciais
-p1 = [-5; -5; -0.5];              % posicao [m]
+p1 = [-5; -5; 0.5];              % posicao [m]
 v1 = [0; 0; 0];              % velocidade [m/s]
-r1 = deg2rad([0; 0; 0]);     % atitude [rad]
+r1 = deg2rad([30; 0; 0]);     % atitude [rad]
 q1 = deg2rad([0; 0; 0]);     % rotacao [rad/s]
 x1 = [p1; r1; v1; q1];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % condicoes iniciais
-p2 = [-4; -5; -0.5];              % posicao [m]
+p2 = [-4; -5; 0.5];              % posicao [m]
 v2 = [0; 0; 0];              % velocidade [m/s]
-r2 = deg2rad([0; 0; 0]);     % atitude [rad]
+r2 = deg2rad([30; 0; 0]);     % atitude [rad]
 q2 = deg2rad([0; 0; 0]);     % rotacao [rad/s]
 x2 = [p2; r2; v2; q2];
 
@@ -77,56 +77,63 @@ para=1;
 set(figure(10),'name','Simulação','numbertitle','on') % Setting the name of the figure
 clf(figure(10)) % Erase the contents of the figure
 
-plots =     [0 0 0 0 0 0 0 1 0 0];%define quais plots quer visualizar na simulacao
-plotsfim =  [1 1 0 0 0 1 1 0 0 0];%define quais plots quer visualizar no final
-if (plots(1)==1)%posicao%orientacao
-    %figure(30), clf, set(gcf, 'Position', [562.6000  360.2000  560.0000  420.0000]);
-    %figure(30), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
+%define quais plots quer visualizar na simulacao
+plots =     [0 1 0 0 0 0 0 0 0 0];
+%define quais plots quer visualizar no final
+plotsfim =  [1 0 0 0 1 1 1 1 0 0];
+
+if (plots(1)==1)%posicao %orientacao %ambos
     figure(30), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.8856    0.9680]);%direita
+    set(figure(30),'name','Posição e Orientação','numbertitle','on') % Setting the name of the figure
     figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9098   -0.1854    0.8032    0.9680]);%posicao hp esquerda
 end
-if (plots(2)==1)%velocidade linear %angular
-    %figure(31), clf, set(gcf, 'Position', [ 562.6000  360.2000  560.0000  420.0000]);
+if (plots(2)==1)%velocidade linear %angular %ambos
     figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9098   -0.1854    0.8032    0.9680]);%posicao hp esquerda
     figure(31), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]),;%direita
+    set(figure(31),'name','Velocidades Linear e Angular','numbertitle','on') % Setting the name of the figure
 end
-if (plots(3)==1)%velocidade motor
-    figure(32), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);
-    %figure(32), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
+if (plots(3)==1)%velocidade motor %ambos
+    figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9098   -0.1854    0.8032    0.9680]);%posicao hp esquerda
+    figure(32), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]),;%direita
+    set(figure(32),'name','Velocidades dos Motores','numbertitle','on') % Setting the name of the figure
 end
-if (plots(4)==1)%forcas motores
-    %figure(33), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);
-    figure(33), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
+if (plots(4)==1)%forcas motores %ambos
+    figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9098   -0.1854    0.8032    0.9680]);%posicao hp esquerda
+    figure(33), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]),;%direita
+    set(figure(33),'name','Forças nos motores','numbertitle','on') % Setting the name of the figure
 end
 if (plots(5)==1)%forca motor, peso, empuxo, arrasto, coriolis AMBOS
-    %figure(34), clf, set(gcf, 'Position', [562.6000  360.2000  560.0000  420.0000]);
-    %figure(34), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
     figure(34), clf, set(gcf, 'Position', 1.0e+03 *[ 2.6226  -0.1862   1.0584   0.968]);%direita
     figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9154  -0.1862    0.7048   0.968]);%posicao hp esquerda
+    set(figure(34),'name','Forças','numbertitle','on') % Setting the name of the figure
 end
-if (plots(6)==1)%z; v_z; f_z  
-    %figure(35), clf, set(gcf, 'Position', [ 2250.6    243.4    561.6    538.4]);
+if (plots(6)==1)%z; v_z; f_z arrasto 
     figure(35), clf, set(gcf, 'Position', 1.0e+03 *[ 2.6226  -0.1862   1.0584   0.968]);%direita
     figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9154  -0.1862    0.7048   0.968]);%posicao hp esquerda
+    set(figure(35),'name','Posição, Velocidade e Força de Arrasto em z','numbertitle','on') % Setting the name of the figure
 end
-if (plots(7)==1)% f_z ambos 
-    %figure(36), clf, set(gcf, 'Position', [ 2250.6    243.4    561.6    538.4]);
+if (plots(7)==1)% f_z  %ambos 
     figure(36), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.8856    0.9680]);%direita
     figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9098   -0.1854    0.8032    0.9680]);%posicao hp esquerda
+    set(figure(36),'name','fz','numbertitle','on') % Setting the name of the figure
 end
-if (plots(8)==1)% a_z ambos
-    %figure(38), clf, set(gcf, 'Position', [ -12.6000  362.6000  560.0000  420.0000]);
+if (plots(8)==1)% z; vz; a_z; %ambos
     figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9098   -0.1854    0.8032    0.9680]);%posicao hp esquerda
     figure(38), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
 end
-if (plots(9)==1)%forca motor, peso, empuxo, arrasto, coriolis quad2
+if (plots(9)==1)%forca motor, peso, empuxo, arrasto, coriolis quad1
     %figure(39), clf, set(gcf, 'Position', [ -12.6000  362.6000  560.0000  420.0000]);
     figure(39), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
+    figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9098   -0.1854    0.8032    0.9680]);%posicao hp esquerda
+end
+if (plots(10)==1)%forca motor, peso, empuxo, arrasto, coriolis quad2
+    figure(40), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
+    figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9098   -0.1854    0.8032    0.9680]);%posicao hp esquerda
 end
 
-%tempo=uav{1}.time();
 tempo=5;
-dt = 1/500;
+dt = 1/100;
+
 while (uav{1}.time() < tf)% && (min(wps) <= length(traj))    
     
     %figure(10), set(gca,'FontSize',16);
