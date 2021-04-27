@@ -27,7 +27,7 @@ addpath('auxx2/');
 % traj{end+1} = [-5; 5; 5; deg2rad(0)];
 % traj{end+1} = [-5; -5; 5; deg2rad(0)];
 % traj{end+1} = [-5; -5; 0; deg2rad(0)];
-traj{1} = [-5; -5; 10; deg2rad(0)];
+traj{1} = [5; 5; 10; deg2rad(0)];
 % traj{end+1} = [10; -5; -5; deg2rad(0)];
 % traj{end+1} = [10; 10; -5; deg2rad(0)];
 % traj{end+1} = [-10; 10; -5; deg2rad(0)];
@@ -36,31 +36,32 @@ traj{1} = [-5; -5; 10; deg2rad(0)];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % condicoes iniciais
-p1 = [-5; -5; 0.5];              % posicao [m]
+p1 = [5; 5; .5];              % posicao [m]
 v1 = [0; 0; 0];              % velocidade [m/s]
-r1 = deg2rad([30; 0; 0]);     % atitude [rad]
+r1 = deg2rad([0; 0; 0]);     % atitude [rad]
 q1 = deg2rad([0; 0; 0]);     % rotacao [rad/s]
 x1 = [p1; r1; v1; q1];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % condicoes iniciais
-p2 = [-4; -5; 0.5];              % posicao [m]
+p2 = [5; 5; .5];              % posicao [m]
 v2 = [0; 0; 0];              % velocidade [m/s]
-r2 = deg2rad([30; 0; 0]);     % atitude [rad]
+r2 = deg2rad([0; 0; 0]);     % atitude [rad]
 q2 = deg2rad([0; 0; 0]);     % rotacao [rad/s]
 x2 = [p2; r2; v2; q2];
 
 p = [p1 p2];
 
-% Hydrone V1
-%uav{1} = quadHibrido(x, 'aw', [1 0 1]);
-% Hydrone V2
-uav{1} = quadHibridoproposta(x1, 'b');
-%uav{2} = quadHibridoproposta2(x2, 'r');
-uav{2} = quadHibridoproposta1(x2, 'r');
+%comparação com e sem modificação
+%uav{1} = quadHibridoproposta(x1, 'b');
+%uav{2} = quadHibridoproposta1(x2, 'r');
+
+%comparação com e sem transição
+uav{1} = quadHibridoproposta1(x1, 'b');
+uav{2} = quadHibridoproposta2(x2, 'r');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % main loop
-tf = 4.0;
+tf = 60.0;
 count = 0;
 wps = ones(size(uav));
 chegou = false(size(uav));
@@ -78,13 +79,13 @@ set(figure(10),'name','Simulação','numbertitle','on') % Setting the name of the 
 clf(figure(10)) % Erase the contents of the figure
 
 %define quais plots quer visualizar na simulacao
-plots =     [0 1 0 0 0 0 0 0 0 0];
+plots =     [0 0 0 0 0 0 0 0 0 0 0];
 %define quais plots quer visualizar no final
-plotsfim =  [1 0 0 0 1 1 1 1 0 0];
+plotsfim =  [1 1 0 0 1 1 1 1 0 0 1];
 
 if (plots(1)==1)%posicao %orientacao %ambos
-    figure(30), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.8856    0.9680]);%direita
     set(figure(30),'name','Posição e Orientação','numbertitle','on') % Setting the name of the figure
+    figure(30), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
     figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9098   -0.1854    0.8032    0.9680]);%posicao hp esquerda
 end
 if (plots(2)==1)%velocidade linear %angular %ambos
@@ -130,6 +131,10 @@ if (plots(10)==1)%forca motor, peso, empuxo, arrasto, coriolis quad2
     figure(40), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
     figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9098   -0.1854    0.8032    0.9680]);%posicao hp esquerda
 end
+if (plots(11)==1)%forca motor, peso, empuxo, arrasto, coriolis quad2
+    figure(41), clf, set(gcf, 'Position', 1.0e+03 *[2.7154   -0.1854    0.9608    0.9680]);%direita
+    figure(10), clf, set(gcf, 'Position',  1.0e+03 *[1.9098   -0.1854    0.8032    0.9680]);%posicao hp esquerda
+end
 
 tempo=5;
 dt = 1/100;
@@ -171,8 +176,8 @@ while (uav{1}.time() < tf)% && (min(wps) <= length(traj))
 %         drawWater(  [min(uav{idx}.hyst.x(1,:))-1 max(uav{idx}.hyst.x(1,:))+1], ...
 %                     [min(uav{idx}.hyst.x(2,:))-1 max(uav{idx}.hyst.x(2,:))+1], ...
 %                     [min(uav{idx}.hyst.x(3,:))-1 max(uav{idx}.hyst.x(3,:))+1]);
-        drawWater(  [-6 -3], ...
-                    [-4 -6], ...
+        drawWater(  [4 7], ...
+                    [6 4], ...
                     [-1 0]);
         % desenha trajetoria
         %wayps = [traj{:}]';
@@ -187,9 +192,9 @@ while (uav{1}.time() < tf)% && (min(wps) <= length(traj))
         grid on;
         hold off;
         drawnow;
-        for u = 1:length(uav)
-            uav{u}.plot(plots, tf);      
-        end
+%         for u = 1:length(uav)
+%             uav{u}.plot(plots, tf);      
+%         end
         if (para == 1)
             w = waitforbuttonpress;%pause(5);
             para = 0;

@@ -251,6 +251,7 @@ classdef quadHibridoproposta1 < handle
             % correspondentes ao movimento
             %wdes = D*w;
             wdes = [0; 0; 0; 0];
+            %wdes = [0; -500; 0; -500];
             
             %% atualiza o estado dos motores
             % a função update(this, wdes, dt, env) com entradas 
@@ -768,11 +769,16 @@ classdef quadHibridoproposta1 < handle
             id1 = find(z >= 0);
             id2 = find(z < 0);
             % trajetoria aerea
+%             plot3(this.hyst.x(1,id1), this.hyst.x(2,id1), this.hyst.x(3,id1), ...
+%                 '-', 'Color', .7*[1 0 0], 'linewidth', 2);
+%             % trajetoria aquatica
+%             plot3(this.hyst.x(1,id2), this.hyst.x(2,id2), this.hyst.x(3,id2), ...
+%                 '-', 'Color', .7*[1 0 1], 'linewidth', 2);
             plot3(this.hyst.x(1,id1), this.hyst.x(2,id1), this.hyst.x(3,id1), ...
-                '-', 'Color', .7*[1 0 0], 'linewidth', 2);
+                '-', 'Color', .7*[0 1 1], 'linewidth', 2);
             % trajetoria aquatica
             plot3(this.hyst.x(1,id2), this.hyst.x(2,id2), this.hyst.x(3,id2), ...
-                '-', 'Color', .7*[1 0 1], 'linewidth', 2);
+                '-', 'Color', .7*[0 0 1], 'linewidth', 2);
             
             xlabel('x[m]')
             ylabel('y[m]')
@@ -830,7 +836,8 @@ classdef quadHibridoproposta1 < handle
                     %plot(t, ref(i,:), '--', 'Color', this.cor, 'linewidth', 1); hold on;
                     ylabel(['$$' labels{i} ' [m]$$'], 'Interpreter','latex')
                     xlim([t(1) fim]);
-                    xticks([0:0.5:fim]);
+%                     ylim([3.5 5.5]);
+%                     xticks([0:0.5:fim]);
                     %xticks([0:2:fim]);
                     %xticks([0:5:fim]);
                     box off;
@@ -838,7 +845,7 @@ classdef quadHibridoproposta1 < handle
                 end
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 labels = {'\phi', '\theta', '\psi'};
-                sp = [2 1 3];
+                sp = [1 2 3];
                 for i = 1:3
                     figure(30),set(gca,'FontSize',18);
                     subplot(3,2,2*sp(i))
@@ -846,7 +853,8 @@ classdef quadHibridoproposta1 < handle
                     %plot(t, rad2deg(ref(3+i,:)), '--', 'Color', this.cor, 'linewidth', 1); hold on;
                     ylabel(['$$' labels{i} ' [deg.]$$'], 'Interpreter','latex')
                     xlim([t(1) fim]);
-                    xticks([0:0.5:fim]);
+%                     ylim([-45 45]);
+%                     xticks([0:0.5:fim]);
                     %xticks([0:2:fim]);
                     %xticks([0:5:fim]); 
                     box off;
@@ -864,7 +872,8 @@ classdef quadHibridoproposta1 < handle
                     plot(t, v(i,:), 'Color', this.cor, 'linewidth', 1); hold on;
                     ylabel(['$$' labels{i} ' [m/s]$$'], 'Interpreter','latex')
                     xlim([t(1) fim])
-                    xticks([0:0.5:fim]);
+                    ylim([-4 4]);
+%                     xticks([0:0.5:fim]);
                     %xticks([0:2:fim]);
                     %xticks([0:5:fim]);
                     box off;
@@ -878,7 +887,8 @@ classdef quadHibridoproposta1 < handle
                     plot(t, rad2deg(q(i,:)), 'Color', this.cor, 'linewidth', 1); hold on;
                     ylabel(['$$' labels{i} ' [deg./s]$$'], 'Interpreter','latex')
                     xlim([t(1) fim])
-                    xticks([0:0.5:fim]);
+                    ylim([-20 20]);
+%                     xticks([0:0.5:fim]);
                     %xticks([0:2:fim]);
                     %xticks([0:5:fim]);
                     box off;
@@ -920,7 +930,7 @@ classdef quadHibridoproposta1 < handle
                 figure(34)
                 for i = 1:3
                     figure(34),set(gca,'FontSize',18);
-                    subplot(3,2,(2*i))
+                    subplot(3,2,(2*i)-1)
                     yyaxis left
                     plot(t, forca1(i,:), '-', 'Color', 'b', 'linewidth', 1); 
                     hold on;
@@ -940,16 +950,19 @@ classdef quadHibridoproposta1 < handle
                     ylabel(['$$' labels{i} '[N]$$'], 'Interpreter','latex')
                     xlim([t(1) fim])
                     %xticks([0:fim]);
-                    xticks([0:0.5:fim]);
+%                     xticks([0:0.5:fim]);
                     %xticks([0:2:fim]);
                     %xticks([0:5:fim]);
                     box off;
                     xlabel('$$tempo [s]$$', 'Interpreter','latex')
+                    if (i == 1)
+%                         title('Modificado');
+                        title('Sem transição');
+                    end
                     if (i == 3)
-                        title('Modificado');
-%                         title('Sem transição');
                         legend('motor','peso','empuxo','coriolis','arrasto');
                     end
+                    grid on;
                 end
                 figure(34),set(gca,'FontSize',18);
             end
@@ -980,8 +993,8 @@ classdef quadHibridoproposta1 < handle
                 hold on;
                 plot(t, forca4(3,:),'-', 'Color', this.cor, 'linewidth', 1); 
                 ylabel(['$$arrasto f_z [N]$$'], 'Interpreter','latex')
-                legend('original','novo');
-%                 legend('sem transição','com transição');
+%                 legend('original','novo');
+                legend('sem transição','com transição');
                 hold off;
                 xlim([t(1) fim])
                 xticks([0:0.5:fim]);
@@ -993,7 +1006,7 @@ classdef quadHibridoproposta1 < handle
             end
             if (plots(7)== 1)
                 figure(36),set(gca,'FontSize',16);
-                subplot(2,1,2)
+                subplot(2,1,1)
                 yyaxis left
                 plot(t, forca1(3,:), '-', 'Color', 'b', 'linewidth', 1); 
                 hold on;
@@ -1018,10 +1031,11 @@ classdef quadHibridoproposta1 < handle
                 %xticks([0:5:fim]);
                 box off;
                 xlabel('$$tempo [s]$$', 'Interpreter','latex')
-                title('Modificado');
-%                 title('Com transição');
+%                 title('Modificado');
+                title('Sem transição');
                 legend('motor','peso','empuxo','coriolis','arrasto');
                 figure(36),set(gca,'FontSize',16);
+                grid on;
             end
             if (plots(8)== 1)
                 figure(38), set(gca,'FontSize',18);
@@ -1093,6 +1107,20 @@ classdef quadHibridoproposta1 < handle
                     xlabel('$$tempo [s]$$', 'Interpreter','latex')
                 end
                 figure(34),set(gca,'FontSize',18);
+            end
+            labels = {'at_x', 'at_y', 'at_z'};
+            if (plots(11)== 1)
+                figure(41)
+                for i = 1:3
+                    figure(41),set(gca,'FontSize',18);
+                    subplot(3,1,i)
+                    plot(t, at(i,:), 'Color', this.cor, 'linewidth', 1); 
+                    hold on;
+                    ylabel(['$$' labels{i} '[m/s^2]$$'], 'Interpreter','latex')
+                    xlim([t(1) fim])
+                    box off;
+                    xlabel('$$tempo [s]$$', 'Interpreter','latex')
+                end
             end
         end
     end
