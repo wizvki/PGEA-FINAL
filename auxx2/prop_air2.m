@@ -9,7 +9,8 @@ classdef prop_air2 < handle
         
         r = 0.250/2; % propellers radius
         
-        height = 0.27/2;
+        height = 0.27/4;
+        contraroting_dist = .1;     % [m] altura
         
         % saturacoes de velocidade
         satW_air = saturation([0 4000]);
@@ -83,13 +84,13 @@ classdef prop_air2 < handle
         % pega densidade do ambiente
         function rho = getRho(this)
             if isAir(this.env)
-                if (this.z  >= this.height)    
+                if (this.z  >= this.contraroting_dist)    
                     rho = this.rho_air;
                 else
                     rho = (-(this.rho_wat - this.rho_air) / (2 * this.height))*(this.z - this.height) + this.rho_air;
                 end
             else
-                if (this.z <= -this.height)
+                if (this.z <= -this.contraroting_dist)
                     rho = this.rho_wat;
                 else
                     rho = (-(this.rho_wat - this.rho_air) / (2 * this.height))*(this.z - this.height) + this.rho_air;
