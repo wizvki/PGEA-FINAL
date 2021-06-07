@@ -4,6 +4,7 @@ clc;
 
 addpath('auxx/');
 addpath('auxx2/');
+addpath('auxx3/');
 %format long
 %digitsOld = digits(50);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -36,20 +37,30 @@ traj{1} = [5; 5; 10; deg2rad(0)];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % condicoes iniciais
-p1 = [5; 5; .5];              % posicao [m]
+p1 = [5; 5; -1];              % posicao [m]
 v1 = [0; 0; 0];              % velocidade [m/s]
-r1 = deg2rad([0; 0; 0]);     % atitude [rad]
+r1 = deg2rad([30; 0; 0]);     % atitude [rad]
 q1 = deg2rad([0; 0; 0]);     % rotacao [rad/s]
 x1 = [p1; r1; v1; q1];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % condicoes iniciais
-p2 = [5; 5; .5];              % posicao [m]
+p2 = [5; 5; -1];              % posicao [m]
 v2 = [0; 0; 0];              % velocidade [m/s]
-r2 = deg2rad([0; 0; 0]);     % atitude [rad]
+r2 = deg2rad([30; 0; 0]);     % atitude [rad]
 q2 = deg2rad([0; 0; 0]);     % rotacao [rad/s]
 x2 = [p2; r2; v2; q2];
 
 p = [p1 p2];
+
+%%%%%%%forca arrasto plot unico
+%figure(33), set(gcf, 'Position', [304.2000  252.2000  842.4000  424.0000])
+
+%%%%%%%z vz az plot 3x1
+%figure(38), set(gcf, 'Position', [343.4000  -52.6000  842.4000  792.0000])
+
+%%%%%% peso empuxo plot 2x1
+%figure(21), set(gcf, 'Position', [389.8000   83.4000  842.4000  656.0000])
+
 
 %comparação com e sem modificação
 %uav{1} = quadHibridoproposta(x1, 'b');
@@ -57,11 +68,11 @@ p = [p1 p2];
 
 %comparação com e sem transição
 uav{1} = quadHibridoproposta1(x1, 'b');
-uav{2} = quadHibridoproposta2(x2, 'r');
+uav{2} = quadHibridoproposta(x2, 'r');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % main loop
-tf = 60.0;
+tf = 5.0;
 count = 0;
 wps = ones(size(uav));
 chegou = false(size(uav));
@@ -79,9 +90,9 @@ set(figure(10),'name','Simulação','numbertitle','on') % Setting the name of the 
 clf(figure(10)) % Erase the contents of the figure
 
 %define quais plots quer visualizar na simulacao
-plots =     [0 0 0 0 0 0 0 0 0 0 0];
+plots =     [0 0 0 0 0 0 0 0 0 0 0 0 0];
 %define quais plots quer visualizar no final
-plotsfim =  [1 1 0 0 1 1 1 1 0 0 1];
+plotsfim =  [1 1 0 0 0 0 1 1 1 1 1 0 0];
 
 if (plots(1)==1)%posicao %orientacao %ambos
     set(figure(30),'name','Posição e Orientação','numbertitle','on') % Setting the name of the figure
@@ -163,9 +174,9 @@ while (uav{1}.time() < tf)% && (min(wps) <= length(traj))
     %fora_do_if = tempo
     % desenha
     if (tempo >= 5) %&& (desenha)
-    %if (mod(uav{1}.time, 1/100) <= .001) %&& (desenha)
-        %entrei_no_if = uav{1}.time
-        %entrei_no_if = tempo
+    if (mod(uav{1}.time, 1/100) <= .001) %&& (desenha)
+        entrei_no_if = uav{1}.time
+        entrei_no_if = tempo
         figure(10), clf;
         % desenha drones
         for u = 1:length(uav)
@@ -176,7 +187,7 @@ while (uav{1}.time() < tf)% && (min(wps) <= length(traj))
 %         drawWater(  [min(uav{idx}.hyst.x(1,:))-1 max(uav{idx}.hyst.x(1,:))+1], ...
 %                     [min(uav{idx}.hyst.x(2,:))-1 max(uav{idx}.hyst.x(2,:))+1], ...
 %                     [min(uav{idx}.hyst.x(3,:))-1 max(uav{idx}.hyst.x(3,:))+1]);
-        drawWater(  [4 7], ...
+        drawWater(  [4 6], ...
                     [6 4], ...
                     [-1 0]);
         % desenha trajetoria
@@ -184,17 +195,17 @@ while (uav{1}.time() < tf)% && (min(wps) <= length(traj))
         %plot3(wayps(:,1), wayps(:,2), wayps(:,3), 'k--', 'linewidth', 2), set(gca,'FontSize',16);
         axis equal;
         axis tight;
-        xlabel(['$$x [N]$$'], 'Interpreter','latex')
-        ylabel(['$$y [N]$$'], 'Interpreter','latex')
-        zlabel(['$$z [N]$$'], 'Interpreter','latex')
+        xlabel(['$$x [m]$$'], 'Interpreter','latex')
+        ylabel(['$$y [m]$$'], 'Interpreter','latex')
+        zlabel(['$$z [m]$$'], 'Interpreter','latex')
         
         set(gca,'View',[-35,20],'FontSize',16); % set the azimuth and elevation of the plot
         grid on;
         hold off;
         drawnow;
-%         for u = 1:length(uav)
-%             uav{u}.plot(plots, tf);      
-%         end
+        for u = 1:length(uav)
+            uav{u}.plot(plots, tf);      
+        end
         if (para == 1)
             w = waitforbuttonpress;%pause(5);
             para = 0;
@@ -223,3 +234,11 @@ end
 for u = 1:length(uav)
     uav{u}.plot(plotsfim, tf);
 end
+
+%figure(33), set(gcf, 'Position', [304.2000  252.2000  842.4000  424.0000])
+% figure(30), set(gcf, 'Position', [343.4000  -52.6000  842.4000  792.0000])
+% figure(31), set(gcf, 'Position', [343.4000  -52.6000  842.4000  792.0000])
+% figure(34), set(gcf, 'Position', [343.4000  -52.6000  842.4000  792.0000])
+ figure(41), set(gcf, 'Position', [343.4000  -52.6000  842.4000  792.0000])
+% % figure(21), set(gcf, 'Position', [389.8000   83.4000  842.4000  656.0000])
+figure(36), set(gcf, 'Position', [389.8000   83.4000  842.4000  656.0000])

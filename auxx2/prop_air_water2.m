@@ -44,7 +44,7 @@ classdef prop_air_water2 < handle
                 this.prop_dw.update(0, dt, env);
             else
                 this.prop_up.update(0, dt, env);
-                this.prop_dw.update(-wdes, dt, env);
+                this.prop_dw.update(wdes, dt, env);
             end
             this.z = z;
         end
@@ -63,7 +63,8 @@ classdef prop_air_water2 < handle
             if isAir(this.env)
                 F = this.prop_up.getForce();
             else
-                F = -this.prop_dw.getForce();
+%                 F = -this.prop_dw.getForce();
+                F = this.prop_up.getForce();
             end
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
